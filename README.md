@@ -1,4 +1,4 @@
-# maetel-site
+# ms-icd
 
 GitHub Pages로 배포되는 정적 HTML 웹사이트입니다.
 
