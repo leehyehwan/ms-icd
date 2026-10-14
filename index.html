@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#33544B">
-<title>조명선</title>
+<title>조명선 Alice</title>
 <meta name="description" content="아름다움을 찾아, 두 번째 인생을 살고 있습니다.">
-<meta property="og:title" content="조명선">
+<meta property="og:title" content="조명선 Alice">
 <meta property="og:description" content="아름다움을 찾아, 두 번째 인생을 살고 있습니다.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,7 +358,7 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
       </div>
       <div class="intro">
         <h1 class="name">조명선</h1>
-        <p class="roman" id="roman">CHO MYUNG-SUN</p>
+        <p class="roman" id="roman">ALICE · CHO MYUNG-SUN</p>
         <p class="role" id="role"></p>
         <div class="hero-rule"></div>
         <p class="tag" id="tag"></p>
@@ -435,8 +435,16 @@ const PHOTOS = {
     // ,{ src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" }
   ],
 
-  store: [],        // 매장 사진 2장
-  beforeAfter: [],  // 변화 전 / 후 사진 2장
+  store: [          // 매장 사진 2장
+    { src:"images/store-1.jpg", alt:"올리비아로렌 매장판매순위 1위 인천구월점" },
+    { src:"images/store-2.jpg", alt:"세정그룹 감사패와 매출우수상" }
+  ],
+  beforeAfter: [    // 변화 후 사진
+    { src:"images/after-1.jpg", alt:"7Days 프로그램 후 정면" },
+    { src:"images/after-2.jpg", alt:"7Days 프로그램 후 정면" },
+    { src:"images/after-3.jpg", alt:"7Days 프로그램 후 옆모습" },
+    { src:"images/after-4.jpg", alt:"7Days 프로그램 후 옆모습" }
+  ],
 
   /* 맺음말 위 자동 슬라이드 — 가로형 사진이 가장 잘 맞습니다 */
   gallery: [
@@ -451,7 +459,7 @@ const SHOW_PLACEHOLDER = true; // 공개할 때는 false 로 바꾸세요
 /* ② 문구 */
 const T = {
   ko:{
-    label:"한국어", abbr:"KO", roman:"CHO MYUNG-SUN",
+    label:"한국어", abbr:"KO", roman:"ALICE · CHO MYUNG-SUN",
     role:"아름다움과 행복을 전하는 사람",
     tag:"아름다움을 찾아,<br>두 번째 인생을 살고 있습니다.",
     t1:"전국 1위를 내려놓다",
@@ -467,10 +475,10 @@ const T = {
     ph_store:"매장 사진<br>준비 중",
     ph_ba:["변화 전<br>사진 준비 중","변화 후<br>사진 준비 중"],
     ph_gal:"사진 슬라이드 자리<br>PHOTOS.gallery 에 사진을 넣어 주세요",
-    foot:"조명선"
+    foot:"조명선 Alice"
   },
   en:{
-    label:"English", abbr:"EN", roman:"CHO MYUNG-SUN",
+    label:"English", abbr:"EN", roman:"ALICE · CHO MYUNG-SUN",
     role:"Sharing beauty, and the joy that comes with it",
     tag:"I went looking for beauty,<br>and found a second life.",
     t1:"Letting go of the number one store",
@@ -486,10 +494,10 @@ const T = {
     ph_store:"Store photo<br>coming soon",
     ph_ba:["Before<br>coming soon","After<br>coming soon"],
     ph_gal:"Photo slideshow<br>coming soon",
-    foot:"Cho Myung-sun"
+    foot:"Alice Cho Myung-sun"
   },
   zh:{
-    label:"中文", abbr:"中", roman:"CHO MYUNG-SUN",
+    label:"中文", abbr:"中", roman:"ALICE · CHO MYUNG-SUN",
     role:"传递美丽与幸福的人",
     tag:"为了寻找美丽，<br>我正走在第二段人生里。",
     t1:"放下全国第一的门店",
@@ -505,10 +513,10 @@ const T = {
     ph_store:"门店照片<br>准备中",
     ph_ba:["改变前<br>照片准备中","改变后<br>照片准备中"],
     ph_gal:"照片幻灯片<br>准备中",
-    foot:"Cho Myung-sun"
+    foot:"Alice Cho Myung-sun"
   },
   ja:{
-    label:"日本語", abbr:"日", roman:"チョ・ミョンソン",
+    label:"日本語", abbr:"日", roman:"アリス · チョ・ミョンソン",
     role:"美しさと幸せを届ける人",
     tag:"美しさを求めて、<br>二度目の人生を歩んでいます。",
     t1:"全国一位の店を手放して",
@@ -524,10 +532,10 @@ const T = {
     ph_store:"店舗の写真<br>準備中",
     ph_ba:["変化前<br>写真準備中","変化後<br>写真準備中"],
     ph_gal:"写真スライド<br>準備中",
-    foot:"チョ・ミョンソン"
+    foot:"アリス チョ・ミョンソン"
   },
   ru:{
-    label:"Русский", abbr:"RU", roman:"CHO MYUNG-SUN",
+    label:"Русский", abbr:"RU", roman:"ALICE · CHO MYUNG-SUN",
     role:"Человек, который дарит красоту и счастье",
     tag:"В поисках красоты<br>я живу второй жизнью.",
     t1:"Я оставила магазин номер один в стране",
@@ -543,7 +551,7 @@ const T = {
     ph_store:"Фото салона<br>скоро",
     ph_ba:["До<br>скоро","После<br>скоро"],
     ph_gal:"Слайд-шоу<br>скоро",
-    foot:"Чо Мён Сон"
+    foot:"Алиса Чо Мён Сон"
   }
 };
 
