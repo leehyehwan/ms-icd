@@ -5,9 +5,8 @@ GitHub Pages로 배포되는 정적 HTML 웹사이트입니다.
 ## 구조
 
 ```
-index.html     메인 페이지
-css/style.css  스타일
-js/main.js     스크립트
+index.html     메인 페이지 (스타일·스크립트 포함)
+images/        사진 파일
 .nojekyll      Jekyll 처리 비활성화
 ```
 

@@ -1,57 +1,718 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ms-icd</title>
-  <meta name="description" content="ms-icd 웹사이트">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#33544B">
+<title>조명선</title>
+<meta name="description" content="아름다움을 찾아, 두 번째 인생을 살고 있습니다.">
+<meta property="og:title" content="조명선">
+<meta property="og:description" content="아름다움을 찾아, 두 번째 인생을 살고 있습니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- 한국어·영문 서체만 먼저 받습니다. 중국어·일본어 서체는 해당 언어를 고를 때만 내려받습니다. -->
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   단청(丹靑) · 한지 팔레트  ―  모바일 우선
+   ══════════════════════════════════════════════════ */
+:root{
+  --ji:      #EDE9DE;
+  --ji-deep: #E2DCCC;
+  --muk:     #2B2622;
+  --muk-mid: #5D554C;
+  --cheong:  #33544B;
+  --ok:      #BFD1C7;
+  --ju:      #9C2A24;
+  --ju-lit:  #B8382F;
+  --geum:    #A8843E;
+
+  --serif: 'Gowun Batang', 'Nanum Myeongjo', serif;
+  --sans:  'Gowun Dodum', system-ui, -apple-system, sans-serif;
+
+  --bar-h: 118px;          /* 실제 높이는 스크립트가 다시 재줍니다 */
+  --pad: 20px;
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--ji);
+  color:var(--muk);
+  font-family:var(--serif);
+  font-size:16px;
+  line-height:1.9;
+  letter-spacing:.005em;
+  padding-bottom:var(--bar-h);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body[data-lang="zh"]{font-family:'Noto Serif SC', var(--serif)}
+body[data-lang="ja"]{font-family:'Noto Serif JP', var(--serif)}
+body[data-lang="ru"]{font-family:'PT Serif', Georgia, serif}
+body.locked{overflow:hidden; height:100%}
+
+button,a{-webkit-tap-highlight-color:transparent}
+
+/* 한지 결 — 스크롤 중 다시 그리지 않도록 absolute 로 한 번만 깝니다 */
+#grain{
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  pointer-events:none; z-index:0; opacity:.45;
+  background-image:repeating-linear-gradient(94deg, rgba(120,105,80,.04) 0 1px, transparent 1px 4px);
+}
+main,footer{position:relative; z-index:1}
+
+.wrap{width:calc(100% - var(--pad)*2); margin-inline:auto}
+
+/* ══════ 언어 선택 ══════ */
+#gate{
+  position:fixed; inset:0; z-index:90;
+  background:var(--cheong);
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--pad);
+  padding-bottom:calc(var(--pad) + env(safe-area-inset-bottom));
+  transition:opacity .7s var(--ease), visibility .7s;
+}
+#gate.gone{opacity:0; visibility:hidden}
+.gate-inner{
+  width:100%; max-width:340px; text-align:center;
+  animation:gateIn .85s var(--ease) both .1s;
+}
+@keyframes gateIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+.gate-mark{font-size:13px; letter-spacing:.5em; color:var(--ok); font-family:var(--sans); text-indent:.5em}
+.gate-rule{width:32px; height:1px; background:var(--geum); margin:28px auto}
+.langs{list-style:none; margin:0; padding:0}
+.langs button{
+  width:100%; background:transparent; border:0; cursor:pointer;
+  color:#F3F0E7; font-family:var(--serif); font-size:19px;
+  min-height:62px; padding:12px 8px; letter-spacing:.04em;
+  border-bottom:1px solid rgba(243,240,231,.15);
+  transition:background .3s var(--ease), color .3s;
+}
+.langs li:first-child button{border-top:1px solid rgba(243,240,231,.15)}
+.langs button span{display:block; font-family:var(--sans); font-size:10px; letter-spacing:.2em; color:var(--ok); margin-top:4px}
+.langs button:active{background:rgba(243,240,231,.14)}
+
+/* ══════ 언어 전환 ══════ */
+#switch{
+  position:fixed; top:calc(10px + env(safe-area-inset-top)); right:10px; z-index:60;
+  opacity:0; transform:translateY(-6px);
+  transition:opacity .6s var(--ease) .4s, transform .6s var(--ease) .4s;
+}
+#switch.on{opacity:1; transform:none}
+#switchBtn{
+  display:flex; align-items:center; gap:9px;
+  min-height:40px; padding:0 13px; cursor:pointer;
+  background:rgba(237,233,222,.95); border:1px solid rgba(168,132,62,.42);
+  font-family:var(--sans); font-size:12.5px; letter-spacing:.04em; color:var(--muk);
+}
+#switchBtn svg{width:9px; height:6px; flex:0 0 auto; transition:transform .3s var(--ease)}
+#switch.open #switchBtn svg{transform:rotate(180deg)}
+#switchMenu{
+  list-style:none; margin:6px 0 0; padding:0;
+  position:absolute; right:0; top:100%; min-width:138px;
+  background:var(--cheong); border:1px solid var(--geum);
+  box-shadow:0 14px 30px -14px rgba(0,0,0,.5);
+  opacity:0; visibility:hidden; transform:translateY(-6px);
+  transition:opacity .25s var(--ease), transform .25s var(--ease), visibility .25s;
+}
+#switch.open #switchMenu{opacity:1; visibility:visible; transform:none}
+#switchMenu button{
+  display:block; width:100%; text-align:left; cursor:pointer;
+  background:transparent; border:0; min-height:46px; padding:0 15px;
+  font-family:var(--sans); font-size:13.5px; letter-spacing:.03em; color:#F3F0E7;
+  border-bottom:1px solid rgba(243,240,231,.12);
+}
+#switchMenu li:last-child button{border-bottom:0}
+#switchMenu button[aria-selected="true"]{color:var(--geum)}
+#switchMenu button:active{background:rgba(243,240,231,.14)}
+
+/* ══════ 히어로 ══════ */
+.hero{padding:56px 0 4px}
+.hero-grid{display:grid; gap:34px; justify-items:center; text-align:center}
+.hero-photo{width:100%; max-width:340px}
+
+.frame{
+  position:relative;
+  border-radius:50% 50% 4px 4px / 15% 15% 4px 4px;
+  overflow:hidden; background:var(--ji-deep);
+  aspect-ratio:3/4;
+  box-shadow:0 18px 44px -24px rgba(43,38,34,.5);
+  clip-path:inset(0 50% 0 50%);
+  animation:doorOpen 1.4s var(--ease) both .3s;
+}
+@keyframes doorOpen{to{clip-path:inset(0 0 0 0)}}
+.frame::after{
+  content:''; position:absolute; inset:6px; pointer-events:none; z-index:3;
+  border:1px solid rgba(237,233,222,.42);
+  border-radius:50% 50% 2px 2px / 14% 14% 2px 2px;
+}
+.slide{position:absolute; inset:0; opacity:0; transition:opacity 1.3s var(--ease)}
+.slide.on{opacity:1}
+.slide img{width:100%; height:100%; object-fit:cover; display:block}
+.slide.on img{animation:drift 18s ease-out both}
+@keyframes drift{from{transform:scale(1.005)} to{transform:scale(1.05)}}
+
+/* 점 — 보이는 크기는 작게, 누르는 범위는 넉넉하게 */
+.dots{display:flex; justify-content:center; margin-top:10px}
+.dots button{
+  width:38px; height:38px; padding:0; border:0; background:transparent;
+  cursor:pointer; display:grid; place-items:center;
+}
+.dots button::before{
+  content:''; width:7px; height:7px; border-radius:50%;
+  border:1px solid var(--muk-mid); opacity:.5;
+  transition:background .35s var(--ease), transform .35s var(--ease), opacity .35s;
+}
+.dots button[aria-current="true"]::before{background:var(--ju); border-color:var(--ju); opacity:1; transform:scale(1.35)}
+
+.intro{animation:rise 1s var(--ease) both .95s; max-width:30em}
+@keyframes rise{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+.name{font-size:clamp(40px,11vw,60px); font-weight:700; line-height:1.15; letter-spacing:.1em; margin:0; text-indent:.1em}
+.roman{font-family:var(--sans); font-size:10.5px; letter-spacing:.32em; color:var(--geum); margin:12px 0 0; text-indent:.32em}
+.role{font-family:var(--sans); font-size:13px; letter-spacing:.1em; color:var(--muk-mid); margin:5px 0 0}
+.hero-rule{width:42px; height:2px; background:var(--ju); margin:24px auto 0}
+.tag{font-size:19px; line-height:1.8; margin:24px auto 0; max-width:18em}
+
+/* ══════ 이야기 ══════ */
+.story{padding:62px 0 10px}
+.chapter{margin:0 0 48px}
+.mark{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.num{
+  flex:0 0 auto; width:29px; height:29px; display:grid; place-items:center;
+  border-radius:50%; background:var(--ji); border:1px solid var(--geum);
+  color:var(--geum); font-size:12.5px; line-height:1;
+}
+.mark i{flex:1 1 auto; height:1px; background:linear-gradient(90deg, var(--geum), rgba(168,132,62,0)); opacity:.6}
+.ch-title{font-size:22px; font-weight:700; letter-spacing:.01em; margin:0 0 14px; line-height:1.5}
+.ch-body{margin:0; font-size:16px; line-height:1.95; color:#3B342E}
+
+/* ══════ 사진 자리 ══════ */
+.plate{margin:0 0 48px}
+.plate-grid{display:grid; gap:10px; grid-template-columns:1fr 1fr}
+.ph{
+  aspect-ratio:3/4; border:1px dashed rgba(93,85,76,.4);
+  display:grid; place-items:center; text-align:center; padding:12px;
+  background:rgba(226,220,204,.35);
+  font-family:var(--sans); font-size:11px; letter-spacing:.05em; color:var(--muk-mid); line-height:1.85;
+}
+.plate img{width:100%; height:100%; object-fit:cover; display:block; aspect-ratio:3/4}
+
+/* ══════ 맺음 ══════ */
+.close{background:var(--cheong); color:#F1EEE5; margin-top:28px; padding:62px 0 66px; text-align:center; position:relative}
+.gallery + .close{margin-top:0}
+.gallery + .close::before{display:none}
+.close::before{content:''; position:absolute; top:0; left:0; right:0; height:1px; background:var(--geum); opacity:.55}
+.close p{margin:0; font-size:21px; line-height:1.8; letter-spacing:.01em}
+.close p + p{margin-top:10px; color:var(--ok)}
+.close .seal{
+  display:inline-block; margin-top:30px; padding:8px 13px;
+  border:1px solid rgba(241,238,229,.35); font-family:var(--sans);
+  font-size:10.5px; letter-spacing:.3em; color:var(--ok); text-indent:.3em;
+}
+
+/* ══════ 맨 아래 슬라이드 ══════ */
+.gallery{position:relative; background:var(--ji-deep)}
+.gal-frame{
+  position:relative; width:100%; aspect-ratio:4/5; overflow:hidden;
+  border-top:1px solid var(--geum); border-bottom:1px solid var(--geum);
+}
+.gal-slide{position:absolute; inset:0; opacity:0; transition:opacity .6s var(--ease)}
+.gal-slide.on{opacity:1}
+.gal-slide img{width:100%; height:100%; object-fit:cover; display:block}
+.gal-dots{position:absolute; left:0; right:0; bottom:6px; z-index:2; display:flex; justify-content:center; flex-wrap:wrap; padding:0 10px}
+.gal-dots button{width:26px; height:30px; padding:0; border:0; background:transparent; cursor:pointer; display:grid; place-items:center}
+.gal-dots button::before{
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:rgba(246,242,232,.5);
+  transition:background .3s var(--ease), transform .3s var(--ease);
+}
+.gal-dots button[aria-current="true"]::before{background:#F6F2E8; transform:scale(1.6)}
+.gal-empty{
+  position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+  font-family:var(--sans); font-size:11.5px; letter-spacing:.06em; color:var(--muk-mid);
+  line-height:2; padding:20px;
+}
+
+footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-size:10.5px; letter-spacing:.12em; color:var(--muk-mid)}
+
+/* ══════ 바닥 고정 버튼 ══════ */
+#bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  background:var(--cheong);
+  border-top:1px solid var(--geum);
+  padding:12px var(--pad) calc(12px + env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+  transform:translateY(102%); transition:transform .7s var(--ease);
+}
+#bar.up{transform:none}
+.bar-note{font-family:var(--sans); font-size:12.5px; letter-spacing:.03em; color:var(--ok); margin:0; text-align:center}
+.cta{
+  position:relative; overflow:hidden; isolation:isolate;
+  display:block; width:100%; text-align:center; text-decoration:none;
+  background:var(--ju); color:#F6F2E8;
+  font-family:inherit; font-size:17px; font-weight:700; letter-spacing:.1em;
+  padding:15px 18px; text-indent:.1em; border:1px solid var(--ju-lit);
+  box-shadow:0 5px 16px -9px rgba(0,0,0,.6);
+  transition:transform .3s var(--ease);
+}
+.cta::before{content:''; position:absolute; inset:0; z-index:-1; background:var(--ju-lit); transform:translateY(101%); transition:transform .45s var(--ease)}
+.cta:active{transform:scale(.985)}
+.cta:focus-visible{outline:2px solid var(--ok); outline-offset:2px}
+
+/* 마우스가 있는 기기에서만 호버 반응 */
+@media (hover:hover) and (pointer:fine){
+  .langs button{transition:background .35s var(--ease), letter-spacing .45s var(--ease), color .3s}
+  .langs button:hover,.langs button:focus-visible{background:rgba(243,240,231,.08); letter-spacing:.16em; color:#fff; outline:none}
+  #switchMenu button:hover{background:rgba(243,240,231,.1)}
+  #switchBtn:hover{border-color:var(--geum)}
+  .cta{transition:transform .45s var(--ease), box-shadow .45s var(--ease)}
+  .cta:hover,.cta:focus-visible{transform:translateY(-3px); box-shadow:0 12px 26px -10px rgba(0,0,0,.66)}
+  .cta:hover::before,.cta:focus-visible::before{transform:none}
+}
+
+/* ══════ 태블릿 이상 ══════ */
+@media(min-width:720px){
+  :root{--pad:32px}
+  body{font-size:17px}
+  .wrap{width:min(100% - var(--pad)*2, 880px)}
+  .hero{padding:88px 0 20px}
+  .hero-grid{gap:48px}
+  .hero-photo{max-width:420px}
+  .tag{font-size:23px; line-height:1.85; max-width:22em}
+  .story{padding:104px 0 30px}
+  .chapter{margin-bottom:74px; padding-left:70px; position:relative}
+  .mark{position:absolute; left:0; top:2px; margin:0; width:31px; display:block}
+  .mark i{display:none}
+  .chapter::after{content:''; position:absolute; left:15px; top:40px; bottom:-46px; width:1px; background:linear-gradient(var(--geum), rgba(168,132,62,0)); opacity:.45}
+  .chapter:last-of-type::after{bottom:auto; height:48px}
+  .ch-title{font-size:26px; margin-bottom:18px}
+  .ch-body{font-size:17.5px; max-width:34em}
+  .plate{padding-left:70px; margin-bottom:74px}
+  .plate-grid{gap:14px; max-width:34em}
+  .close{padding:80px 0 86px; margin-top:40px}
+  .gallery + .close{margin-top:0}
+  .close p{font-size:28px}
+  .gal-frame{aspect-ratio:16/9}
+  .gal-dots{bottom:12px}
+  #bar{flex-direction:row; justify-content:center; gap:22px; padding:14px var(--pad) calc(14px + env(safe-area-inset-bottom))}
+  .cta{width:auto; padding:15px 44px; font-size:16.5px; letter-spacing:.14em; text-indent:.14em}
+  #switch{top:16px; right:16px}
+  .langs button{font-size:21px}
+}
+
+/* 화면이 짧은 기기 — 언어 목록 5개가 한 화면에 들어오도록 */
+@media(max-height:700px){
+  .gate-rule{margin:20px auto}
+  .langs button{min-height:54px; font-size:18px; padding:9px 8px}
+  .langs button span{font-size:9px; margin-top:2px}
+}
+
+/* 접근성 */
+:focus-visible{outline:2px solid var(--ju); outline-offset:3px}
+.rv{opacity:0; transform:translateY(18px); transition:opacity .85s var(--ease), transform .85s var(--ease)}
+.rv.seen{opacity:1; transform:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; animation-delay:0ms !important; transition-duration:.01ms !important}
+  .frame{clip-path:none}
+  .rv{opacity:1 !important; transform:none !important}
+}
+</style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="container nav">
-      <a class="logo" href="./">ms-icd</a>
-      <nav>
-        <a href="#about">소개</a>
-        <a href="#programs">프로그램</a>
-        <a href="#contact">문의</a>
-      </nav>
+<body data-lang="ko">
+<div id="grain"></div>
+
+<!-- ───── 언어 선택 ───── -->
+<div id="gate" role="dialog" aria-modal="true" aria-label="Language">
+  <div class="gate-inner">
+    <div class="gate-mark">조명선</div>
+    <div class="gate-rule"></div>
+    <ul class="langs">
+      <li><button data-l="ko">한국어<span>KOREAN</span></button></li>
+      <li><button data-l="en">English<span>ENGLISH</span></button></li>
+      <li><button data-l="zh">中文<span>CHINESE</span></button></li>
+      <li><button data-l="ja">日本語<span>JAPANESE</span></button></li>
+      <li><button data-l="ru">Русский<span>RUSSIAN</span></button></li>
+    </ul>
+  </div>
+</div>
+
+<div id="switch">
+  <button type="button" id="switchBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+    <span id="switchLabel">한국어</span>
+    <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.3"/></svg>
+  </button>
+  <ul id="switchMenu" role="listbox"></ul>
+</div>
+
+<main>
+  <!-- ───── 사진 · 이름 · 소개 ───── -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-photo">
+        <div class="frame" id="frame"></div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <div class="intro">
+        <h1 class="name">조명선</h1>
+        <p class="roman" id="roman">CHO MYUNG-SUN</p>
+        <p class="role" id="role"></p>
+        <div class="hero-rule"></div>
+        <p class="tag" id="tag"></p>
+      </div>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section class="hero">
-      <div class="container">
-        <h1>여기에 메인 문구를 넣으세요</h1>
-        <p>짧은 소개 문장을 한두 줄로 적어주세요.</p>
-        <a class="btn" href="#contact">문의하기</a>
-      </div>
-    </section>
+  <!-- ───── 이야기 ───── -->
+  <section class="story">
+    <div class="wrap">
+      <article class="chapter rv">
+        <div class="mark"><div class="num">一</div><i></i></div>
+        <h2 class="ch-title" id="t1"></h2>
+        <p class="ch-body" id="b1"></p>
+      </article>
 
-    <section id="about" class="container section">
-      <h2>소개</h2>
-      <p>회사 또는 서비스에 대한 설명을 적어주세요.</p>
-    </section>
+      <div class="plate rv" id="plate-store"><div class="plate-grid" id="grid-store"></div></div>
 
-    <section id="programs" class="container section">
-      <h2>프로그램</h2>
-      <div class="cards">
-        <article class="card"><h3>프로그램 1</h3><p>설명</p></article>
-        <article class="card"><h3>프로그램 2</h3><p>설명</p></article>
-        <article class="card"><h3>프로그램 3</h3><p>설명</p></article>
-      </div>
-    </section>
+      <article class="chapter rv">
+        <div class="mark"><div class="num">二</div><i></i></div>
+        <h2 class="ch-title" id="t2"></h2>
+        <p class="ch-body" id="b2"></p>
+      </article>
 
-    <section id="contact" class="container section">
-      <h2>문의</h2>
-      <p>이메일: <a href="mailto:contact@example.com">contact@example.com</a></p>
-    </section>
-  </main>
+      <article class="chapter rv">
+        <div class="mark"><div class="num">三</div><i></i></div>
+        <h2 class="ch-title" id="t3"></h2>
+        <p class="ch-body" id="b3"></p>
+      </article>
 
-  <footer class="site-footer">
-    <div class="container">© <span id="year"></span> ms-icd</div>
-  </footer>
+      <div class="plate rv" id="plate-ba"><div class="plate-grid" id="grid-ba"></div></div>
+    </div>
+  </section>
 
-  <script src="js/main.js"></script>
+  <!-- ───── 사진 슬라이드 ───── -->
+  <section class="gallery" id="gallery">
+    <div class="gal-frame" id="gal"><div class="gal-dots" id="galDots"></div></div>
+  </section>
+
+  <!-- ───── 맺음 ───── -->
+  <section class="close">
+    <div class="wrap rv">
+      <p id="c1"></p>
+      <p id="c2"></p>
+      <div class="seal">조명선</div>
+    </div>
+  </section>
+
+</main>
+
+<footer><span id="foot"></span></footer>
+
+<!-- ───── 바닥 고정 버튼 ───── -->
+<div id="bar">
+  <p class="bar-note" id="note"></p>
+  <a class="cta" id="cta" href="https://kr.riman.com/signup/selecttype?referrerCode=1027379201" target="_blank" rel="noopener"></a>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   ① 사진 — 여기만 고치면 됩니다
+   ═══════════════════════════════════════════════════
+   구글 드라이브에 올린 사진을 쓰는 법
+     1) 드라이브에서 사진 우클릭 → 공유 → "링크가 있는 모든 사용자"
+     2) 링크 .../file/d/★여기가파일ID★/view 에서 ID를 복사
+     3) src 에 "https://lh3.googleusercontent.com/d/파일ID" 형태로 넣기
+
+   모바일에서 빨리 뜨게 하려면 올리기 전에 가로 1200px 정도로 줄여 주세요.
+   ═══════════════════════════════════════════════════ */
+const PHOTOS = {
+  /* 맨 위 아치 슬라이드 — 세로형(3:4) 사진이 가장 잘 맞습니다 */
+  hero: [
+    { src:"images/hero-1.jpg", alt:"한복을 입은 조명선" }
+    // ,{ src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" }
+  ],
+
+  store: [],        // 매장 사진 2장
+  beforeAfter: [],  // 변화 전 / 후 사진 2장
+
+  /* 맺음말 위 자동 슬라이드 — 가로형 사진이 가장 잘 맞습니다 */
+  gallery: [
+    // { src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" },
+    // { src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" },
+  ]
+};
+
+const GALLERY_MS = 2000;       // 사진 슬라이드 전환 간격 (밀리초)
+const SHOW_PLACEHOLDER = true; // 공개할 때는 false 로 바꾸세요
+
+/* ② 문구 */
+const T = {
+  ko:{
+    label:"한국어", abbr:"KO", roman:"CHO MYUNG-SUN",
+    role:"아름다움과 행복을 전하는 사람",
+    tag:"아름다움을 찾아,<br>두 번째 인생을 살고 있습니다.",
+    t1:"전국 1위를 내려놓다",
+    b1:"전국에서 1위를 하던 매장이었습니다. 다들 왜 그만두느냐고 물었지만, 저는 더 늦기 전에 아름다움에 도전하고 싶었습니다. 그렇게 단숨에 매장을 정리하고 인생 2막을 시작했습니다.",
+    t2:"ICD를 만나다",
+    b2:"삶이 힘들고 막막하던 때였습니다. 우연히 찾아간 곳에서 한 사람을 소개받았고, 그분이 직접 시연을 해주었습니다. 집에 돌아와 거울 앞에 섰을 때 자꾸만 마음이 갔습니다. 궁금해서 물었고, 그렇게 ICD를 만났습니다.",
+    t3:"7일 만에 찾아온 변화",
+    b3:"7Days 프로그램을 시작한 바로 다음 날부터 달라지는 저를 느꼈습니다. 단 일곱 날이었습니다. 거울 앞에서 신이 났고, 하루하루가 즐거웠습니다. ‘나’라는 사람과 ‘나’라는 내면이 함께 행복해졌습니다.",
+    c1:"이제는 이 행복을 전하고 싶습니다.",
+    c2:"아름다움과 행복을, 당신에게도.",
+    cta:"함께 시작하기",
+    note:"회원가입하시고 함께 아름다워져요",
+    ph_store:"매장 사진<br>준비 중",
+    ph_ba:["변화 전<br>사진 준비 중","변화 후<br>사진 준비 중"],
+    ph_gal:"사진 슬라이드 자리<br>PHOTOS.gallery 에 사진을 넣어 주세요",
+    foot:"조명선"
+  },
+  en:{
+    label:"English", abbr:"EN", roman:"CHO MYUNG-SUN",
+    role:"Sharing beauty, and the joy that comes with it",
+    tag:"I went looking for beauty,<br>and found a second life.",
+    t1:"Letting go of the number one store",
+    b1:"I ran the top-performing store in the country. Everyone asked why I would walk away from it. But I wanted to take my chance on beauty before it was too late. So I closed it, all at once, and began the second act of my life.",
+    t2:"Meeting ICD",
+    b2:"It was a season when life felt heavy and the road ahead unclear. Somewhere I happened to visit, I was introduced to someone, and she gave me a demonstration herself. When I got home and stood in front of the mirror, I couldn’t stop thinking about it. I asked, and that is how I met ICD.",
+    t3:"Seven days, and everything changed",
+    b3:"From the very day after I began the 7Days program, I could feel myself changing. Seven days was all it took. I was delighted in front of the mirror, and every day felt good. The person I am and the person within me became happy together.",
+    c1:"Now I want to pass that happiness on.",
+    c2:"Beauty and happiness — for you, too.",
+    cta:"Start with me",
+    note:"Sign up, and let’s grow beautiful together",
+    ph_store:"Store photo<br>coming soon",
+    ph_ba:["Before<br>coming soon","After<br>coming soon"],
+    ph_gal:"Photo slideshow<br>coming soon",
+    foot:"Cho Myung-sun"
+  },
+  zh:{
+    label:"中文", abbr:"中", roman:"CHO MYUNG-SUN",
+    role:"传递美丽与幸福的人",
+    tag:"为了寻找美丽，<br>我正走在第二段人生里。",
+    t1:"放下全国第一的门店",
+    b1:"那是一家全国排名第一的门店。身边的人都问我为什么要放手，但我想在还来得及的时候，去挑战「美」。于是我果断结束了门店，开启了人生的第二幕。",
+    t2:"遇见 ICD",
+    b2:"那是一段生活艰难、前路不明的日子。在一次偶然的造访中，有人为我引荐了一位朋友，她亲自为我做了体验。回到家站在镜子前，我的心一直放不下。我忍不住开口询问，就这样遇见了 ICD。",
+    t3:"七天带来的改变",
+    b3:"开始 7Days 项目的第二天，我就感觉到自己在改变。只用了七天。站在镜子前，我雀跃不已，每一天都很愉快。「我」这个人，和「我」的内心，一起变得幸福起来。",
+    c1:"如今，我想把这份幸福传递下去。",
+    c2:"把美丽与幸福，也带给你。",
+    cta:"一起开始",
+    note:"注册加入，一起变美吧",
+    ph_store:"门店照片<br>准备中",
+    ph_ba:["改变前<br>照片准备中","改变后<br>照片准备中"],
+    ph_gal:"照片幻灯片<br>准备中",
+    foot:"Cho Myung-sun"
+  },
+  ja:{
+    label:"日本語", abbr:"日", roman:"チョ・ミョンソン",
+    role:"美しさと幸せを届ける人",
+    tag:"美しさを求めて、<br>二度目の人生を歩んでいます。",
+    t1:"全国一位の店を手放して",
+    b1:"全国で一位を誇る店でした。周りには「なぜ辞めるのか」と聞かれましたが、手遅れになる前に「美しさ」に挑戦したかったのです。そうして店をきっぱり畳み、人生の第二幕が始まりました。",
+    t2:"ICDとの出会い",
+    b2:"暮らしが苦しく、先の見えない時期でした。ふと訪れた場所である方を紹介していただき、その方が直接体験をさせてくれました。家に帰って鏡の前に立つと、どうしても気になって仕方がありません。思いきって尋ね、そうしてICDに出会いました。",
+    t3:"七日間で訪れた変化",
+    b3:"7Daysプログラムを始めた翌日から、変わっていく自分を感じました。たった七日間でした。鏡の前で心が弾み、一日一日が楽しくなりました。「わたし」という人も、「わたし」の内側も、一緒に幸せになったのです。",
+    c1:"今はこの幸せを、誰かに届けたい。",
+    c2:"美しさと幸せを、あなたにも。",
+    cta:"一緒にはじめる",
+    note:"会員登録して、一緒に美しくなりましょう",
+    ph_store:"店舗の写真<br>準備中",
+    ph_ba:["変化前<br>写真準備中","変化後<br>写真準備中"],
+    ph_gal:"写真スライド<br>準備中",
+    foot:"チョ・ミョンソン"
+  },
+  ru:{
+    label:"Русский", abbr:"RU", roman:"CHO MYUNG-SUN",
+    role:"Человек, который дарит красоту и счастье",
+    tag:"В поисках красоты<br>я живу второй жизнью.",
+    t1:"Я оставила магазин номер один в стране",
+    b1:"Это был магазин с лучшими показателями в стране. Все спрашивали, зачем я от него отказываюсь. Но мне хотелось попробовать себя в красоте, пока не стало поздно. Я закрыла его в один момент и начала второй акт своей жизни.",
+    t2:"Встреча с ICD",
+    b2:"Это было время, когда жизнь давалась тяжело, а дорога впереди казалась неясной. Там, куда я однажды зашла случайно, меня познакомили с одной женщиной, и она сама провела для меня процедуру. Дома я встала перед зеркалом и никак не могла перестать об этом думать. Я расспросила — так я и узнала об ICD.",
+    t3:"Семь дней, которые всё изменили",
+    b3:"Уже на следующий день после начала программы 7Days я почувствовала, что меняюсь. Хватило семи дней. Я радовалась перед зеркалом, и каждый день приносил удовольствие. Я сама и то, что внутри меня, стали счастливы вместе.",
+    c1:"Теперь мне хочется передать это счастье другим.",
+    c2:"Красоту и счастье — и вам тоже.",
+    cta:"Начать вместе",
+    note:"Зарегистрируйтесь — будем красивыми вместе",
+    ph_store:"Фото салона<br>скоро",
+    ph_ba:["До<br>скоро","После<br>скоро"],
+    ph_gal:"Слайд-шоу<br>скоро",
+    foot:"Чо Мён Сон"
+  }
+};
+
+/* ════════ 이하 동작 ════════ */
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* 중국어·일본어 서체는 고를 때만 내려받습니다 */
+const FONT = {
+  zh:'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap',
+  ja:'https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600&display=swap',
+  ru:'https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap'
+};
+function loadFont(l){
+  if(!FONT[l] || document.getElementById('font-'+l)) return;
+  const k = document.createElement('link');
+  k.id = 'font-'+l; k.rel = 'stylesheet'; k.href = FONT[l];
+  document.head.appendChild(k);
+}
+
+/* 슬라이드 (히어로 · 사진 슬라이드 공용) */
+function makeSlider(frame, dotsBox, list, cls, ms){
+  if(!list.length) return;
+  list.forEach((p,i)=>{
+    const s = document.createElement('div');
+    s.className = cls + (i===0 ? ' on' : '');
+    s.innerHTML = '<img src="'+p.src+'" alt="'+(p.alt||'')+'" decoding="async" loading="'+(i===0?'eager':'lazy')+'">';
+    frame.appendChild(s);
+  });
+  const slides = frame.querySelectorAll('.'+cls);
+  let i = 0, t = null, dots = [];
+
+  if(list.length > 1 && dotsBox){
+    list.forEach((p,n)=>{
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', (n+1)+' / '+list.length);
+      if(n===0) b.setAttribute('aria-current','true');
+      b.onclick = ()=>{ go(n); play(); };
+      dotsBox.appendChild(b);
+    });
+    dots = dotsBox.querySelectorAll('button');
+  }
+  function go(n){
+    slides[i].classList.remove('on');
+    if(dots[i]) dots[i].removeAttribute('aria-current');
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add('on');
+    if(dots[i]) dots[i].setAttribute('aria-current','true');
+  }
+  function play(){
+    clearInterval(t);
+    if(!reduce && slides.length > 1 && !document.hidden) t = setInterval(()=>go(i+1), ms);
+  }
+  play();
+  /* 화면을 벗어나면 멈춰서 배터리를 아낍니다 */
+  document.addEventListener('visibilitychange', ()=>{ document.hidden ? clearInterval(t) : play(); });
+}
+
+makeSlider($('#frame'), $('#dots'), PHOTOS.hero, 'slide', 6500);
+makeSlider($('#gal'), $('#galDots'), PHOTOS.gallery, 'gal-slide', GALLERY_MS);
+
+if(!PHOTOS.gallery.length){
+  if(SHOW_PLACEHOLDER){
+    const e = document.createElement('div');
+    e.className = 'gal-empty'; e.id = 'galEmpty';
+    $('#gal').appendChild(e);
+  } else {
+    $('#gallery').style.display = 'none';
+  }
+}
+
+/* 사진 자리 */
+function fillPlate(wrapId, gridId, list, ph){
+  const wrap = $('#'+wrapId), grid = $('#'+gridId);
+  grid.innerHTML = '';
+  if(list.length){
+    wrap.style.display = '';
+    list.forEach(p=>{
+      const c = document.createElement('div');
+      c.innerHTML = '<img src="'+p.src+'" alt="'+(p.alt||'')+'" loading="lazy" decoding="async">';
+      grid.appendChild(c);
+    });
+  } else if(SHOW_PLACEHOLDER){
+    wrap.style.display = '';
+    ph.forEach(txt=>{
+      const c = document.createElement('div');
+      c.className = 'ph'; c.innerHTML = txt;
+      grid.appendChild(c);
+    });
+  } else { wrap.style.display = 'none'; }
+}
+
+/* 언어 적용 */
+function apply(l){
+  const t = T[l];
+  loadFont(l);
+  document.body.dataset.lang = l;
+  document.documentElement.lang = l;
+  $('#roman').textContent = t.roman;
+  $('#role').textContent = t.role;
+  $('#tag').innerHTML = t.tag;
+  for(let i=1;i<=3;i++){ $('#t'+i).textContent = t['t'+i]; $('#b'+i).textContent = t['b'+i]; }
+  $('#c1').textContent = t.c1;
+  $('#c2').textContent = t.c2;
+  $('#cta').textContent = t.cta;
+  $('#note').textContent = t.note;
+  $('#foot').textContent = t.foot;
+  const ge = $('#galEmpty'); if(ge) ge.innerHTML = t.ph_gal;
+  fillPlate('plate-store','grid-store', PHOTOS.store, [t.ph_store, t.ph_store]);
+  fillPlate('plate-ba','grid-ba', PHOTOS.beforeAfter, t.ph_ba);
+  $('#switchLabel').textContent = t.label;
+  document.querySelectorAll('#switchMenu button').forEach(b=>{
+    b.setAttribute('aria-selected', b.dataset.l===l ? 'true' : 'false');
+  });
+  measureBar();
+}
+
+/* 언어 드롭다운 */
+(function buildSwitch(){
+  const box = $('#switch'), btn = $('#switchBtn'), menu = $('#switchMenu');
+
+  Object.keys(T).forEach(l=>{
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.l = l; b.setAttribute('role','option');
+    b.textContent = T[l].label;
+    b.onclick = ()=>{ apply(l); close(); btn.focus(); };
+    li.appendChild(b); menu.appendChild(li);
+  });
+
+  function open(){ box.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+  function close(){ box.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+
+  btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    box.classList.contains('open') ? close() : open();
+  });
+  document.addEventListener('click', e=>{ if(!box.contains(e.target)) close(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') close(); });
+})();
+
+/* 바닥 버튼 높이만큼 본문 아래를 비워 둡니다 (언어·글자 크기에 따라 달라집니다) */
+function measureBar(){
+  const h = $('#bar').offsetHeight;
+  if(h) document.documentElement.style.setProperty('--bar-h', h + 'px');
+}
+addEventListener('resize', measureBar);
+addEventListener('orientationchange', ()=>setTimeout(measureBar, 250));
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(measureBar);
+
+/* 모달 → 진입 */
+document.body.classList.add('locked');
+document.querySelectorAll('.langs button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    apply(b.dataset.l);
+    $('#gate').classList.add('gone');
+    document.body.classList.remove('locked');
+    $('#switch').classList.add('on');
+    setTimeout(()=>{ $('#bar').classList.add('up'); measureBar(); }, 1300);
+  });
+});
+apply('ko');
+
+/* 스크롤 등장 */
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('seen'); io.unobserve(e.target); } });
+},{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
 </body>
 </html>
