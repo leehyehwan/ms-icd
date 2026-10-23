@@ -49,7 +49,13 @@ body{
   padding-bottom:var(--bar-h);
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
+  word-break:keep-all;          /* 한국어 단어 단위 줄바꿈 */
+  overflow-wrap:anywhere;       /* 띄어쓰기 없는 긴 문자열은 넘치지 않게 */
 }
+p, li, label{text-wrap:pretty}
+h1, h2, h3, button{text-wrap:balance}
+.seal, #switchBtn, .num{white-space:nowrap}
+#switchBtn span{min-width:0}
 body[data-lang="zh"]{font-family:'Noto Serif SC', var(--serif)}
 body[data-lang="ja"]{font-family:'Noto Serif JP', var(--serif)}
 body[data-lang="ru"]{font-family:'PT Serif', Georgia, serif}
@@ -220,12 +226,12 @@ main,footer{position:relative; z-index:1}
 /* ══════ 맨 아래 슬라이드 ══════ */
 .gallery{position:relative; background:var(--ji-deep)}
 .gal-frame{
-  position:relative; width:100%; aspect-ratio:4/5; overflow:hidden;
+  position:relative; width:100%; aspect-ratio:1/1; overflow:hidden;
   border-top:1px solid var(--geum); border-bottom:1px solid var(--geum);
 }
 .gal-slide{position:absolute; inset:0; opacity:0; transition:opacity .6s var(--ease)}
 .gal-slide.on{opacity:1}
-.gal-slide img{width:100%; height:100%; object-fit:cover; display:block}
+.gal-slide img{width:100%; height:100%; object-fit:contain; display:block}  /* 전후 비교 사진이 잘리지 않도록 통째로 보여 줍니다 */
 .gal-dots{position:absolute; left:0; right:0; bottom:6px; z-index:2; display:flex; justify-content:center; flex-wrap:wrap; padding:0 10px}
 .gal-dots button{width:26px; height:30px; padding:0; border:0; background:transparent; cursor:pointer; display:grid; place-items:center}
 .gal-dots button::before{
@@ -457,28 +463,34 @@ const PHOTOS = {
 
   /* 맺음말 위 자동 슬라이드 — 가로형 사진이 가장 잘 맞습니다 */
   gallery: [
-    // { src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" },
-    // { src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" },
+    { src:"images/case-1.jpg", alt:"피부 관리 전후 사례 — 남성" },
+    { src:"images/case-2.jpg", alt:"피부 관리 전후 사례 모음" },
+    { src:"images/case-3.jpg", alt:"피부 관리 전후 사례 — 여성" },
+    { src:"images/case-4.jpg", alt:"피부 관리 전후 사례 — 여성" },
+    { src:"images/case-5.jpg", alt:"피부 관리 전후 사례 — 어르신" },
+    { src:"images/case-6.jpg", alt:"피부 관리 전후 사례 — 남성" },
+    { src:"images/case-7.jpg", alt:"피부 관리 전후 사례 — BEFORE / AFTER" },
+    { src:"images/case-8.jpg", alt:"피부 관리 전후 사례 — 어르신" }
   ]
 };
 
-const GALLERY_MS = 2000;       // 사진 슬라이드 전환 간격 (밀리초)
+const GALLERY_MS = 3000;       // 사진 슬라이드 전환 간격 (밀리초)
 const SHOW_PLACEHOLDER = true; // 공개할 때는 false 로 바꾸세요
 
 /* ② 문구 */
 const T = {
   ko:{
     label:"한국어", abbr:"KO", roman:"ALICE · CHO MYUNG-SUN",
-    role:"18년 패션 전문가, 이제는 아름다움을 전합니다",
+    role:"35년 패션 전문가, 이제는 아름다움을 전합니다",
     tag:"전국 1위 매장을 내려놓고,<br>아름다움을 선택했습니다.",
-    t1:"옷과 함께한 18년",
-    b1:"수원의 한 마트 유아복 매장에서 처음 옷을 팔기 시작했습니다. 캐주얼 브랜드 ‘잼 스테이트’ 대리점을 거쳐, 2003년부터는 AK 수원점에서 ‘여성 크로커다일’과 ‘H&T’ 매장을 6년 가까이 운영했습니다. 두 매장 모두 전국 매장 가운데 매출 상위 5% 안에 들었습니다.",
+    t1:"옷과 함께한 35년",
+    b1:"수원 마트의 유아복 매장에서 시작해, AK 수원점 여성복 매장을 전국 매출 상위 5%로 키웠습니다.",
     t2:"전국 1위를 내려놓다",
-    b2:"10년 동안 자리 잡은 수원을 떠나, 늘 해보고 싶던 브랜드 ‘올리비아 로렌’을 인천 구월동에서 열었습니다. 5,000여 명의 고정 고객과 함께 월평균 9,000만 원이 넘는 매출을 올렸고, 전국 매장 판매 순위 1위에 올랐습니다. 다들 왜 그만두느냐고 물었지만, 저는 더 늦기 전에 아름다움에 도전하고 싶었습니다. 그렇게 2026년 9월, 단숨에 매장을 정리하고 인생 2막을 시작했습니다.",
+    b2:"인천 구월동 ‘올리비아 로렌’은 고정 고객 5,000여 명, 월평균 매출 9,000만 원으로 전국 판매 1위에 올랐습니다. 그리고 2026년 9월, 더 늦기 전에 아름다움에 도전하려고 매장을 접었습니다.",
     t3:"ICD를 만나다",
-    b3:"삶이 힘들고 막막하던 때였습니다. 우연히 찾아간 곳에서 한 사람을 소개받았고, 그분이 직접 시연을 해주었습니다. 집에 돌아와 거울 앞에 섰을 때 자꾸만 마음이 갔습니다. 궁금해서 물었고, 그렇게 ICD를 만났습니다. ICD(옛 인셀덤)는 제주에서 직접 키운 자이언트 병풀을 핵심 원료로 하는 리만의 스킨케어 브랜드입니다.",
+    b3:"막막하던 때, 지인의 시연으로 ICD를 처음 만났습니다. 제주 자이언트 병풀로 만든 리만의 스킨케어 브랜드(옛 인셀덤)입니다.",
     t4:"7일 만에 찾아온 변화",
-    b4:"ICD 제품으로 7일 동안 관리하는 7Days 프로그램을 시작한 바로 다음 날부터 달라지는 저를 느꼈습니다. 아래 사진이 그 뒤의 제 얼굴입니다. 이마와 콧등에 맑은 윤기가 돌고, 피부결은 고르게 정돈되었습니다. 옆모습에서는 볼에서 턱까지 매끈하게 이어지는 결과 밝아진 피부톤이 보입니다. 거울 앞에서 신이 났고, 하루하루가 즐거웠습니다. ‘나’라는 사람과 ‘나’라는 내면이 함께 행복해졌습니다.",
+    b4:"7Days는 7일 동안 ICD 화장품을 함께 체험하며 피부 변화를 직접 느끼는 프로그램입니다. 아래 사진 속 윤기와 피부결이 제 변화입니다.",
     c1:"이제는 이 행복을 전하고 싶습니다.",
     c2:"아름다움과 행복을, 당신에게도.",
     cta:"함께 시작하기",
@@ -492,16 +504,16 @@ const T = {
   },
   en:{
     label:"English", abbr:"EN", roman:"ALICE · CHO MYUNG-SUN",
-    role:"18 years in fashion, now sharing beauty",
+    role:"35 years in fashion, now sharing beauty",
     tag:"I let go of the country’s number one store,<br>and chose beauty.",
-    t1:"Eighteen years in fashion",
-    b1:"I started out selling children’s clothes in a supermarket in Suwon. After running a dealership for a casual brand, in 2003 I opened two women’s fashion stores at AK Plaza Suwon and ran them for nearly six years. Both ranked in the top 5% of stores nationwide.",
+    t1:"Thirty-five years in fashion",
+    b1:"I began at a children’s wear counter in a Suwon supermarket and grew my women’s fashion stores at AK Plaza Suwon into the top 5% nationwide.",
     t2:"Letting go of the number one store",
-    b2:"After ten years in Suwon, I moved to Incheon and opened the brand I had always wanted: Olivia Lauren, in Guwol-dong. With more than 5,000 loyal customers, the store averaged over 90 million won a month and reached number one in sales nationwide. Everyone asked why I would walk away from it. But I wanted to take my chance on beauty before it was too late. So in September 2026 I closed it, all at once, and began the second act of my life.",
+    b2:"My Olivia Lauren store in Guwol-dong, Incheon, became number one in sales nationwide, with 5,000 loyal customers and 90 million won a month. In September 2026, I closed it to take my chance on beauty before it was too late.",
     t3:"Meeting ICD",
-    b3:"It was a season when life felt heavy and the road ahead unclear. Somewhere I happened to visit, I was introduced to someone, and she gave me a demonstration herself. When I got home and stood in front of the mirror, I couldn’t stop thinking about it. I asked, and that is how I met ICD. Formerly known as Incellderm, ICD is RIMAN’s skincare brand, built on Giant BYoungPool, a centella grown on RIMAN’s own farm on Jeju Island.",
+    b3:"At a hard time, a friend’s demonstration introduced me to ICD (formerly Incellderm), RIMAN’s skincare brand made with Giant BYoungPool centella from Jeju.",
     t4:"Seven days, and everything changed",
-    b4:"From the very day after I began 7Days, seven days of care with ICD, I could feel myself changing. The photos below show my face afterwards. A clear glow on my forehead and nose, an even, smooth texture, and in profile, a smooth line from cheek to jaw and a brighter skin tone. I was delighted in front of the mirror, and every day felt good. The person I am and the person within me became happy together.",
+    b4:"7Days is ICD’s program where we try the skincare together for seven days and feel the change in our own skin. The glow and texture in the photos below are mine.",
     c1:"Now I want to pass that happiness on.",
     c2:"Beauty and happiness — for you, too.",
     cta:"Start with me",
@@ -515,16 +527,16 @@ const T = {
   },
   zh:{
     label:"中文", abbr:"中", roman:"ALICE · CHO MYUNG-SUN",
-    role:"18年服装行业经验，如今传递美丽",
+    role:"35年服装行业经验，如今传递美丽",
     tag:"放下全国第一的门店，<br>我选择了美丽。",
-    t1:"与服装相伴的十八年",
-    b1:"我最初在水原一家超市的童装店开始卖衣服。之后经营过休闲品牌的代理店，2003年起又在AK水原店经营两家女装门店近六年，两家店的销售额都跻身全国门店前5%。",
+    t1:"与服装相伴的三十五年",
+    b1:"我从水原超市的童装柜台起步，把AK水原店的女装门店做到了全国销售额前5%。",
     t2:"放下全国第一的门店",
-    b2:"离开扎根十年的水原，我在仁川九月洞开了一直心心念念的品牌「Olivia Lauren」。五千多位老顾客的支持下，月均销售额超过9000万韩元，登上全国门店销售排名第一。身边的人都问我为什么要放手，但我想在还来得及的时候，去挑战「美」。于是在2026年9月，我果断结束了门店，开启了人生的第二幕。",
+    b2:"仁川九月洞的「Olivia Lauren」拥有五千多位老顾客，月均销售额9000万韩元，登上全国销售第一。2026年9月，为了趁还来得及去挑战「美」，我关闭了门店。",
     t3:"遇见 ICD",
-    b3:"那是一段生活艰难、前路不明的日子。在一次偶然的造访中，有人为我引荐了一位朋友，她亲自为我做了体验。回到家站在镜子前，我的心一直放不下。我忍不住开口询问，就这样遇见了 ICD。ICD（原 Incellderm 因赛德姆）是 RIMAN 旗下的护肤品牌，核心成分是在济州岛自家农场种植的巨型积雪草。",
+    b3:"在最迷茫的时候，朋友的一次体验让我认识了 ICD——RIMAN 旗下以济州巨型积雪草为原料的护肤品牌（原 Incellderm）。",
     t4:"七天带来的改变",
-    b4:"用 ICD 护理七天的 7Days 项目，开始后的第二天，我就感觉到自己在改变。下面的照片就是之后的我。额头和鼻梁透出清透的光泽，肤质变得细腻均匀；侧面看，从脸颊到下颌的线条顺滑，肤色也更明亮了。站在镜子前，我雀跃不已，每一天都很愉快。「我」这个人，和「我」的内心，一起变得幸福起来。",
+    b4:"7Days 是 ICD 的七天体验项目：大家一起使用产品七天，亲身感受肌肤的变化。下面照片中的光泽与肤质，就是我的改变。",
     c1:"如今，我想把这份幸福传递下去。",
     c2:"把美丽与幸福，也带给你。",
     cta:"一起开始",
@@ -538,16 +550,16 @@ const T = {
   },
   ja:{
     label:"日本語", abbr:"日", roman:"アリス · チョ・ミョンソン",
-    role:"ファッション一筋18年、いまは美しさを届けています",
+    role:"ファッション一筋35年、いまは美しさを届けています",
     tag:"全国一位の店を手放し、<br>美しさを選びました。",
-    t1:"服とともに歩んだ十八年",
-    b1:"水原のスーパーにある子ども服の売り場で、初めて服を売り始めました。カジュアルブランドの代理店を経て、2003年からはAK水原店で婦人服の店を二つ、六年近く運営しました。どちらの店も、全国の店舗で売上上位5%に入りました。",
+    t1:"服とともに歩んだ三十五年",
+    b1:"水原のスーパーの子ども服売り場から始め、AK水原店の婦人服店を全国売上上位5%に育てました。",
     t2:"全国一位の店を手放して",
-    b2:"十年根を下ろした水原を離れ、仁川・九月洞で、ずっとやってみたかったブランド「オリビア・ローレン」の店を開きました。五千人を超える常連のお客様に支えられ、月平均9,000万ウォン以上を売り上げ、全国の店舗売上ランキングで一位になりました。周りには「なぜ辞めるのか」と聞かれましたが、手遅れになる前に「美しさ」に挑戦したかったのです。そうして2026年9月、店をきっぱり畳み、人生の第二幕が始まりました。",
+    b2:"仁川・九月洞の「オリビア・ローレン」は、常連客五千人、月平均売上9,000万ウォンで全国売上一位になりました。2026年9月、手遅れになる前に「美しさ」に挑戦しようと、店を閉じました。",
     t3:"ICDとの出会い",
-    b3:"暮らしが苦しく、先の見えない時期でした。ふと訪れた場所である方を紹介していただき、その方が直接体験をさせてくれました。家に帰って鏡の前に立つと、どうしても気になって仕方がありません。思いきって尋ね、そうしてICDに出会いました。ICD（旧インセルダム）は、済州島の自社農場で育てたジャイアントツボクサを核となる原料にした、RIMANのスキンケアブランドです。",
+    b3:"行き詰まっていた頃、知人の体験を通してICDに出会いました。済州のジャイアントツボクサで作る、RIMANのスキンケアブランド（旧インセルダム）です。",
     t4:"七日間で訪れた変化",
-    b4:"ICDで七日間ケアする7Daysプログラムを始めた翌日から、変わっていく自分を感じました。下の写真が、そのあとの私の顔です。額と鼻筋には澄んだツヤが生まれ、肌のキメはなめらかに整いました。横顔では、頬からあごまでなめらかにつながるラインと、明るくなった肌のトーンが見て取れます。鏡の前で心が弾み、一日一日が楽しくなりました。「わたし」という人も、「わたし」の内側も、一緒に幸せになったのです。",
+    b4:"7Daysは、七日間ICDの化粧品を一緒に体験しながら、肌の変化を実感するプログラムです。下の写真のツヤとキメが、私の変化です。",
     c1:"今はこの幸せを、誰かに届けたい。",
     c2:"美しさと幸せを、あなたにも。",
     cta:"一緒にはじめる",
@@ -561,16 +573,16 @@ const T = {
   },
   ru:{
     label:"Русский", abbr:"RU", roman:"ALICE · CHO MYUNG-SUN",
-    role:"18 лет в моде — теперь дарю красоту",
+    role:"35 лет в моде — теперь дарю красоту",
     tag:"Я оставила лучший магазин страны<br>и выбрала красоту.",
-    t1:"Восемнадцать лет в мире одежды",
-    b1:"Я начинала с продажи детской одежды в супермаркете в Сувоне. Потом у меня было дилерское представительство бренда повседневной одежды, а с 2003 года почти шесть лет я управляла двумя магазинами женской одежды в AK Plaza Suwon. Оба входили в 5% лучших магазинов страны по продажам.",
+    t1:"Тридцать пять лет в мире одежды",
+    b1:"Я начинала с отдела детской одежды в супермаркете в Сувоне, а свои магазины женской одежды в AK Plaza Suwon вывела в 5% лучших по стране.",
     t2:"Я оставила магазин номер один в стране",
-    b2:"Проработав десять лет в Сувоне, я переехала в Инчхон и открыла в районе Курволь-дон магазин бренда, о котором давно мечтала, — Olivia Lauren. У нас было более 5000 постоянных клиентов, средняя выручка превышала 90 миллионов вон в месяц, и магазин занял первое место по продажам в стране. Все спрашивали, зачем я от него отказываюсь. Но мне хотелось попробовать себя в красоте, пока не стало поздно. В сентябре 2026 года я закрыла его в один момент и начала второй акт своей жизни.",
+    b2:"Мой магазин Olivia Lauren в Инчхоне стал первым по продажам в стране: 5000 постоянных клиентов и 90 миллионов вон в месяц. В сентябре 2026 года я закрыла его, чтобы успеть попробовать себя в красоте.",
     t3:"Встреча с ICD",
-    b3:"Это было время, когда жизнь давалась тяжело, а дорога впереди казалась неясной. Там, куда я однажды зашла случайно, меня познакомили с одной женщиной, и она сама провела для меня процедуру. Дома я встала перед зеркалом и никак не могла перестать об этом думать. Я расспросила — так я и узнала об ICD. ICD (раньше — Incellderm) — уходовый бренд компании RIMAN, в основе которого центелла Giant BYoungPool, выращенная на собственной ферме на острове Чеджу.",
+    b3:"В трудное время знакомая показала мне ICD (раньше — Incellderm) — уходовый бренд RIMAN на основе центеллы Giant BYoungPool с острова Чеджу.",
     t4:"Семь дней, которые всё изменили",
-    b4:"Уже на следующий день после начала 7Days — семи дней ухода с ICD — я почувствовала, что меняюсь. На фотографиях ниже — моё лицо после программы. Чистое сияние на лбу и носу, ровная, гладкая текстура кожи, а в профиль — плавная линия от щеки к подбородку и более светлый тон. Я радовалась перед зеркалом, и каждый день приносил удовольствие. Я сама и то, что внутри меня, стали счастливы вместе.",
+    b4:"7Days — программа ICD: семь дней мы вместе пробуем косметику и сами чувствуем, как меняется кожа. Сияние и текстура на фото ниже — мои.",
     c1:"Теперь мне хочется передать это счастье другим.",
     c2:"Красоту и счастье — и вам тоже.",
     cta:"Начать вместе",
