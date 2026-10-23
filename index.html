@@ -209,6 +209,14 @@ main,footer{position:relative; z-index:1}
 .plate figure{margin:0}
 .plate figure img{height:auto}
 .plate figcaption{margin-top:7px; font-family:var(--sans); font-size:11.5px; line-height:1.6; letter-spacing:.02em; color:var(--muk-mid)}
+/* 기사 캡쳐처럼 가로로 긴 자료는 한 칸에 통째로 */
+.plate-wide .plate-grid{grid-template-columns:1fr}
+.plate-wide img{aspect-ratio:auto; object-fit:contain; background:#fff; border:1px solid rgba(93,85,76,.18)}
+
+/* 사례 슬라이드 제목 */
+.gal-head{padding:56px 0 26px; text-align:center}
+.gal-title{margin:0; font-size:26px; font-weight:700; line-height:1.45; letter-spacing:.01em}
+.gal-sub{margin:10px 0 0; font-size:15.5px; color:var(--muk-mid)}
 
 /* ══════ 맺음 ══════ */
 .close{background:var(--cheong); color:#F1EEE5; margin-top:28px; padding:62px 0 66px; text-align:center; position:relative}
@@ -305,6 +313,9 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
   .close{padding:80px 0 86px; margin-top:40px}
   .gallery + .close{margin-top:0}
   .close p{font-size:28px}
+  .gal-head{padding:84px 0 34px}
+  .gal-title{font-size:32px}
+  .gal-sub{font-size:17px}
   .gal-frame{aspect-ratio:16/9}
   .gal-dots{bottom:12px}
   #bar{flex-direction:row; justify-content:center; gap:22px; padding:14px var(--pad) calc(14px + env(safe-area-inset-bottom))}
@@ -384,6 +395,8 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
         <p class="ch-body" id="b1"></p>
       </article>
 
+      <div class="plate plate-wide rv" id="plate-article"><div class="plate-grid" id="grid-article"></div></div>
+
       <article class="chapter rv">
         <div class="mark"><div class="num">二</div><i></i></div>
         <h2 class="ch-title" id="t2"></h2>
@@ -398,6 +411,8 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
         <p class="ch-body" id="b3"></p>
       </article>
 
+      <div class="plate rv" id="plate-icd"><div class="plate-grid" id="grid-icd"></div></div>
+
       <article class="chapter rv">
         <div class="mark"><div class="num">四</div><i></i></div>
         <h2 class="ch-title" id="t4"></h2>
@@ -410,6 +425,10 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
 
   <!-- ───── 사진 슬라이드 ───── -->
   <section class="gallery" id="gallery">
+    <div class="wrap gal-head rv">
+      <h2 class="gal-title" id="galT"></h2>
+      <p class="gal-sub" id="galP"></p>
+    </div>
     <div class="gal-frame" id="gal"><div class="gal-dots" id="galDots"></div></div>
   </section>
 
@@ -450,6 +469,13 @@ const PHOTOS = {
     // ,{ src:"https://lh3.googleusercontent.com/d/파일ID", alt:"" }
   ],
 
+  article: [],     // 기사 캡쳐 — 예: { src:"images/article.png", alt:"조명선 사장 인터뷰 기사" }
+  icd: [           // 병풀 · ICD 제품 (리만 공식몰 이미지)
+    { src:"images/icd-centella.jpg", alt:"제주 자이언트 병풀 잎" },
+    { src:"images/icd-radiansome.jpg", alt:"ICD 래디언솜100 3종" },
+    { src:"images/icd-first-package.jpg", alt:"ICD 더마톨로지 퍼스트 패키지" },
+    { src:"images/icd-cream.jpg", alt:"ICD 더마톨로지 크림" }
+  ],
   store: [          // 매장 사진 2장
     { src:"images/store-1.jpg", alt:"올리비아로렌 매장판매순위 1위 인천구월점" },
     { src:"images/store-2.jpg", alt:"세정그룹 감사패와 매출우수상" }
@@ -484,11 +510,11 @@ const T = {
     role:"35년 패션 전문가, 이제는 아름다움을 전합니다",
     tag:"전국 1위 매장을 내려놓고,<br>아름다움을 선택했습니다.",
     t1:"옷과 함께한 35년",
-    b1:"수원 마트의 유아복 매장에서 시작해, AK 수원점 여성복 매장을 전국 매출 상위 5%로 키웠습니다.",
+    b1:"부평 지하상가의 유아복 매장에서 시작해, 35년 동안 옷과 함께했습니다.",
     t2:"전국 1위를 내려놓다",
-    b2:"인천 구월동 ‘올리비아 로렌’은 고정 고객 5,000여 명, 월평균 매출 9,000만 원으로 전국 판매 1위에 올랐습니다. 그리고 2026년 9월, 더 늦기 전에 아름다움에 도전하려고 매장을 접었습니다.",
+    b2:"인천 구월동 ‘올리비아 로렌’은 월평균 매출 1억 원으로 전국 판매 1위에 올랐습니다. 동시에 매장 5곳을 운영하며 연매출 50억 원을 기록했고, 그중 2곳은 전국 상위 5% 매장이었습니다. 그리고 2026년 9월, 더 늦기 전에 아름다움에 도전하려고 매장을 접었습니다.",
     t3:"ICD를 만나다",
-    b3:"막막하던 때, 지인의 시연으로 ICD를 처음 만났습니다. 제주 자이언트 병풀로 만든 리만의 스킨케어 브랜드(옛 인셀덤)입니다.",
+    b3:"친구 소개로 ICD를 만났습니다. 변화하는 모습이 신기해서 자꾸만 관심이 갔습니다. ICD(옛 인셀덤)는 제주 자이언트 병풀로 만든 리만의 스킨케어 브랜드입니다.",
     t4:"7일 만에 찾아온 변화",
     b4:"7Days는 7일 동안 ICD 화장품을 함께 체험하며 피부 변화를 직접 느끼는 프로그램입니다. 아래 사진 속 윤기와 피부결이 제 변화입니다.",
     c1:"이제는 이 행복을 전하고 싶습니다.",
@@ -499,6 +525,9 @@ const T = {
     ph_ba:["변화 전<br>사진 준비 중","변화 후<br>사진 준비 중"],
     cap_store:["매장판매순위 1위 — 인천구월점","세정그룹 감사패와 매출우수상"],
     cap_ba:["정면 — 이마와 콧등의 맑은 윤기","정면 — 고르게 정돈된 피부결","옆모습 — 볼에서 턱까지 매끈한 결","옆모습 — 밝고 고른 피부톤"],
+    gal_h:"ICD에서 변화한 사람들",
+    gal_p:"모두 ICD를 만나 아름다움을 찾은 사람들입니다.",
+    cap_icd:["제주 자이언트 병풀","래디언솜™100 3종","더마톨로지 퍼스트 패키지","더마톨로지 크림"],
     ph_gal:"사진 슬라이드 자리<br>PHOTOS.gallery 에 사진을 넣어 주세요",
     foot:"조명선 Alice"
   },
@@ -507,11 +536,11 @@ const T = {
     role:"35 years in fashion, now sharing beauty",
     tag:"I let go of the country’s number one store,<br>and chose beauty.",
     t1:"Thirty-five years in fashion",
-    b1:"I began at a children’s wear counter in a Suwon supermarket and grew my women’s fashion stores at AK Plaza Suwon into the top 5% nationwide.",
+    b1:"I started at a children’s wear shop in the Bupyeong underground mall, and have spent 35 years in fashion.",
     t2:"Letting go of the number one store",
-    b2:"My Olivia Lauren store in Guwol-dong, Incheon, became number one in sales nationwide, with 5,000 loyal customers and 90 million won a month. In September 2026, I closed it to take my chance on beauty before it was too late.",
+    b2:"My Olivia Lauren store in Guwol-dong, Incheon, became number one in sales nationwide, averaging 100 million won a month. I ran five stores at once with 5 billion won in annual sales, and two of them ranked in the top 5% nationwide. In September 2026, I closed my store to take my chance on beauty before it was too late.",
     t3:"Meeting ICD",
-    b3:"At a hard time, a friend’s demonstration introduced me to ICD (formerly Incellderm), RIMAN’s skincare brand made with Giant BYoungPool centella from Jeju.",
+    b3:"A friend introduced me to ICD. Watching people change fascinated me, and I kept coming back to it. ICD (formerly Incellderm) is RIMAN’s skincare brand made with Giant BYoungPool centella from Jeju.",
     t4:"Seven days, and everything changed",
     b4:"7Days is ICD’s program where we try the skincare together for seven days and feel the change in our own skin. The glow and texture in the photos below are mine.",
     c1:"Now I want to pass that happiness on.",
@@ -522,6 +551,9 @@ const T = {
     ph_ba:["Before<br>coming soon","After<br>coming soon"],
     cap_store:["No. 1 in store sales — Incheon Guwol","Plaque of appreciation and sales award from Sejung Group"],
     cap_ba:["Front — a clear glow on forehead and nose","Front — an even, smooth texture","Profile — a smooth line from cheek to jaw","Profile — a bright, even skin tone"],
+    gal_h:"People changed by ICD",
+    gal_p:"Every one of them found their beauty through ICD.",
+    cap_icd:["Giant BYoungPool centella from Jeju","Radiansome™100 trio","Dermatology First Package","Dermatology Cream"],
     ph_gal:"Photo slideshow<br>coming soon",
     foot:"Alice Cho Myung-sun"
   },
@@ -530,11 +562,11 @@ const T = {
     role:"35年服装行业经验，如今传递美丽",
     tag:"放下全国第一的门店，<br>我选择了美丽。",
     t1:"与服装相伴的三十五年",
-    b1:"我从水原超市的童装柜台起步，把AK水原店的女装门店做到了全国销售额前5%。",
+    b1:"我从富平地下商街的童装店起步，与服装相伴了三十五年。",
     t2:"放下全国第一的门店",
-    b2:"仁川九月洞的「Olivia Lauren」拥有五千多位老顾客，月均销售额9000万韩元，登上全国销售第一。2026年9月，为了趁还来得及去挑战「美」，我关闭了门店。",
+    b2:"仁川九月洞的「Olivia Lauren」月均销售额1亿韩元，登上全国销售第一。我同时经营五家门店，年销售额50亿韩元，其中两家跻身全国前5%。2026年9月，为了趁还来得及去挑战「美」，我关闭了门店。",
     t3:"遇见 ICD",
-    b3:"在最迷茫的时候，朋友的一次体验让我认识了 ICD——RIMAN 旗下以济州巨型积雪草为原料的护肤品牌（原 Incellderm）。",
+    b3:"经朋友介绍，我认识了 ICD。看到人们一点点改变，我觉得很神奇，越来越感兴趣。ICD（原 Incellderm）是 RIMAN 旗下以济州巨型积雪草为原料的护肤品牌。",
     t4:"七天带来的改变",
     b4:"7Days 是 ICD 的七天体验项目：大家一起使用产品七天，亲身感受肌肤的变化。下面照片中的光泽与肤质，就是我的改变。",
     c1:"如今，我想把这份幸福传递下去。",
@@ -545,6 +577,9 @@ const T = {
     ph_ba:["改变前<br>照片准备中","改变后<br>照片准备中"],
     cap_store:["门店销售排名第一 — 仁川九月店","世正集团感谢牌与销售优秀奖"],
     cap_ba:["正面 — 额头与鼻梁的清透光泽","正面 — 细腻均匀的肤质","侧面 — 从脸颊到下颌的顺滑线条","侧面 — 明亮均匀的肤色"],
+    gal_h:"因 ICD 而改变的人们",
+    gal_p:"他们都是遇见 ICD、找回美丽的人。",
+    cap_icd:["济州巨型积雪草","Radiansome™100 三件套","Dermatology First Package","Dermatology Cream"],
     ph_gal:"照片幻灯片<br>准备中",
     foot:"Alice Cho Myung-sun"
   },
@@ -553,11 +588,11 @@ const T = {
     role:"ファッション一筋35年、いまは美しさを届けています",
     tag:"全国一位の店を手放し、<br>美しさを選びました。",
     t1:"服とともに歩んだ三十五年",
-    b1:"水原のスーパーの子ども服売り場から始め、AK水原店の婦人服店を全国売上上位5%に育てました。",
+    b1:"富平地下街の子ども服店から始め、三十五年間、服とともに歩んできました。",
     t2:"全国一位の店を手放して",
-    b2:"仁川・九月洞の「オリビア・ローレン」は、常連客五千人、月平均売上9,000万ウォンで全国売上一位になりました。2026年9月、手遅れになる前に「美しさ」に挑戦しようと、店を閉じました。",
+    b2:"仁川・九月洞の「オリビア・ローレン」は月平均売上1億ウォンで全国売上一位になりました。同時に五店舗を運営して年商50億ウォンを達成し、そのうち二店舗は全国上位5%の店でした。2026年9月、手遅れになる前に「美しさ」に挑戦しようと、店を閉じました。",
     t3:"ICDとの出会い",
-    b3:"行き詰まっていた頃、知人の体験を通してICDに出会いました。済州のジャイアントツボクサで作る、RIMANのスキンケアブランド（旧インセルダム）です。",
+    b3:"友人の紹介でICDに出会いました。人が変わっていく姿が不思議で、どんどん惹かれていきました。ICD（旧インセルダム）は、済州のジャイアントツボクサで作るRIMANのスキンケアブランドです。",
     t4:"七日間で訪れた変化",
     b4:"7Daysは、七日間ICDの化粧品を一緒に体験しながら、肌の変化を実感するプログラムです。下の写真のツヤとキメが、私の変化です。",
     c1:"今はこの幸せを、誰かに届けたい。",
@@ -568,6 +603,9 @@ const T = {
     ph_ba:["変化前<br>写真準備中","変化後<br>写真準備中"],
     cap_store:["店舗売上ランキング1位 — 仁川九月店","セジョングループの感謝牌と売上優秀賞"],
     cap_ba:["正面 — 額と鼻筋の澄んだツヤ","正面 — なめらかに整った肌のキメ","横顔 — 頬からあごまでなめらかなライン","横顔 — 明るく均一な肌のトーン"],
+    gal_h:"ICDで変わった人たち",
+    gal_p:"みんな、ICDに出会って美しさを見つけた人たちです。",
+    cap_icd:["済州のジャイアントツボクサ","ラディアンソーム™100 3点","ダーマトロジー ファーストパッケージ","ダーマトロジー クリーム"],
     ph_gal:"写真スライド<br>準備中",
     foot:"アリス チョ・ミョンソン"
   },
@@ -576,11 +614,11 @@ const T = {
     role:"35 лет в моде — теперь дарю красоту",
     tag:"Я оставила лучший магазин страны<br>и выбрала красоту.",
     t1:"Тридцать пять лет в мире одежды",
-    b1:"Я начинала с отдела детской одежды в супермаркете в Сувоне, а свои магазины женской одежды в AK Plaza Suwon вывела в 5% лучших по стране.",
+    b1:"Я начинала с магазина детской одежды в подземном торговом центре Пупхёна и уже 35 лет работаю с одеждой.",
     t2:"Я оставила магазин номер один в стране",
-    b2:"Мой магазин Olivia Lauren в Инчхоне стал первым по продажам в стране: 5000 постоянных клиентов и 90 миллионов вон в месяц. В сентябре 2026 года я закрыла его, чтобы успеть попробовать себя в красоте.",
+    b2:"Мой магазин Olivia Lauren в Инчхоне стал первым по продажам в стране — в среднем 100 миллионов вон в месяц. Одновременно я вела пять магазинов с годовой выручкой 5 миллиардов вон, и два из них входили в 5% лучших по стране. В сентябре 2026 года я закрыла магазин, чтобы успеть попробовать себя в красоте.",
     t3:"Встреча с ICD",
-    b3:"В трудное время знакомая показала мне ICD (раньше — Incellderm) — уходовый бренд RIMAN на основе центеллы Giant BYoungPool с острова Чеджу.",
+    b3:"С ICD меня познакомила подруга. Меня поразило, как меняются люди, и я всё больше увлекалась. ICD (раньше — Incellderm) — уходовый бренд RIMAN на основе центеллы Giant BYoungPool с острова Чеджу.",
     t4:"Семь дней, которые всё изменили",
     b4:"7Days — программа ICD: семь дней мы вместе пробуем косметику и сами чувствуем, как меняется кожа. Сияние и текстура на фото ниже — мои.",
     c1:"Теперь мне хочется передать это счастье другим.",
@@ -591,6 +629,9 @@ const T = {
     ph_ba:["До<br>скоро","После<br>скоро"],
     cap_store:["№ 1 по продажам — магазин Инчхон Курволь","Благодарность и награда за продажи от Sejung Group"],
     cap_ba:["Анфас — чистое сияние на лбу и носу","Анфас — ровная, гладкая текстура","Профиль — плавная линия от щеки к подбородку","Профиль — светлый, ровный тон кожи"],
+    gal_h:"Люди, которых изменил ICD",
+    gal_p:"Все они нашли свою красоту вместе с ICD.",
+    cap_icd:["Центелла Giant BYoungPool с Чеджу","Набор Radiansome™100","Dermatology First Package","Dermatology Cream"],
     ph_gal:"Слайд-шоу<br>скоро",
     foot:"Алиса Чо Мён Сон"
   }
@@ -677,7 +718,7 @@ function fillPlate(wrapId, gridId, list, ph, caps){
         + (caps && caps[n] ? '<figcaption>'+caps[n]+'</figcaption>' : '');
       grid.appendChild(c);
     });
-  } else if(SHOW_PLACEHOLDER){
+  } else if(SHOW_PLACEHOLDER && ph && ph.length){
     wrap.style.display = '';
     ph.forEach(txt=>{
       const c = document.createElement('div');
@@ -705,6 +746,10 @@ function apply(l){
   const ge = $('#galEmpty'); if(ge) ge.innerHTML = t.ph_gal;
   fillPlate('plate-store','grid-store', PHOTOS.store, [t.ph_store, t.ph_store], t.cap_store);
   fillPlate('plate-ba','grid-ba', PHOTOS.beforeAfter, t.ph_ba, t.cap_ba);
+  fillPlate('plate-article','grid-article', PHOTOS.article, null, null);
+  fillPlate('plate-icd','grid-icd', PHOTOS.icd, null, t.cap_icd);
+  $('#galT').textContent = t.gal_h;
+  $('#galP').textContent = t.gal_p;
   $('#switchLabel').textContent = t.label;
   document.querySelectorAll('#switchMenu button').forEach(b=>{
     b.setAttribute('aria-selected', b.dataset.l===l ? 'true' : 'false');
