@@ -213,6 +213,28 @@ main,footer{position:relative; z-index:1}
 .plate-wide .plate-grid{grid-template-columns:1fr}
 .plate-wide img{aspect-ratio:auto; object-fit:contain; background:#fff; border:1px solid rgba(93,85,76,.18)}
 
+/* ICD 캐러셀 */
+.icd{margin:0 0 48px}
+.icd-frame{position:relative; aspect-ratio:4/5; overflow:hidden; background:#E9ECE6; border:1px solid rgba(168,132,62,.25)}
+.icd-src{margin:2px 0 0; font-family:var(--sans); font-size:11px; line-height:1.6; color:var(--muk-mid); text-align:center}
+
+/* 전 · 후 비교 */
+.ba{margin:0 0 48px}
+.ba-pair{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px}
+.ba-item{margin:0; position:relative}
+.ba-item img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block}
+.ba-tag{position:absolute; top:8px; left:8px; padding:3px 9px; font-family:var(--sans); font-size:11.5px; letter-spacing:.06em; white-space:nowrap; background:rgba(43,38,34,.72); color:#F6F2E8}
+.ba-item.is-after .ba-tag{background:var(--ju)}
+.ba-item figcaption{margin-top:7px; font-family:var(--sans); font-size:11.5px; line-height:1.6; letter-spacing:.02em; color:var(--muk-mid)}
+.ba-dots{display:none}
+@media (max-width:719px){
+  .ba-grid{display:grid}
+  .ba-pair{display:contents}
+  .ba-item{grid-area:1/1; opacity:0; transition:opacity .6s var(--ease); pointer-events:none}
+  .ba-item.on{opacity:1; pointer-events:auto}
+  .ba-dots{display:flex}
+}
+
 /* 사례 슬라이드 제목 */
 .gal-head{padding:56px 0 26px; text-align:center}
 .gal-title{margin:0; font-size:26px; font-weight:700; line-height:1.45; letter-spacing:.01em}
@@ -313,6 +335,9 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
   .close{padding:80px 0 86px; margin-top:40px}
   .gallery + .close{margin-top:0}
   .close p{font-size:28px}
+  .icd, .ba{padding-left:70px; margin-bottom:74px}
+  .icd > *, .ba-grid{max-width:34em}
+  .ba-pair{gap:14px; margin-bottom:22px}
   .gal-head{padding:84px 0 34px}
   .gal-title{font-size:32px}
   .gal-sub{font-size:17px}
@@ -411,7 +436,11 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
         <p class="ch-body" id="b3"></p>
       </article>
 
-      <div class="plate rv" id="plate-icd"><div class="plate-grid" id="grid-icd"></div></div>
+      <div class="icd rv" id="icd">
+        <div class="icd-frame" id="icdFrame"></div>
+        <div class="dots" id="icdDots"></div>
+        <p class="icd-src" id="icdSrc"></p>
+      </div>
 
       <article class="chapter rv">
         <div class="mark"><div class="num">四</div><i></i></div>
@@ -419,7 +448,10 @@ footer{padding:24px 0 20px; text-align:center; font-family:var(--sans); font-siz
         <p class="ch-body" id="b4"></p>
       </article>
 
-      <div class="plate rv" id="plate-ba"><div class="plate-grid" id="grid-ba"></div></div>
+      <div class="ba rv" id="ba">
+        <div class="ba-grid" id="baGrid"></div>
+        <div class="dots ba-dots" id="baDots"></div>
+      </div>
     </div>
   </section>
 
@@ -470,21 +502,23 @@ const PHOTOS = {
   ],
 
   article: [],     // 기사 캡쳐 — 예: { src:"images/article.png", alt:"조명선 사장 인터뷰 기사" }
-  icd: [           // 병풀 · ICD 제품 (리만 공식몰 이미지)
-    { src:"images/icd-centella.jpg", alt:"제주 자이언트 병풀 잎" },
-    { src:"images/icd-radiansome.jpg", alt:"ICD 래디언솜100 3종" },
-    { src:"images/icd-first-package.jpg", alt:"ICD 더마톨로지 퍼스트 패키지" },
-    { src:"images/icd-cream.jpg", alt:"ICD 더마톨로지 크림" }
+  icd: [           // ICD 더마톨로지 3종 — 리만코리아 공식몰 상세페이지 이미지
+    { src:"images/icd-1-set.jpg", alt:"ICD 더마톨로지 부스터, 세럼, 크림" },
+    { src:"images/icd-2-ingredients.jpg", alt:"자이언트 병풀 3 Solution 핵심 성분" },
+    { src:"images/icd-3-booster.jpg", alt:"더마톨로지 부스터 4주 사용 결과" },
+    { src:"images/icd-4-serum.jpg", alt:"더마톨로지 세럼" },
+    { src:"images/icd-5-serum-data.jpg", alt:"더마톨로지 세럼 4주 사용 결과" },
+    { src:"images/icd-6-cream.jpg", alt:"더마톨로지 크림" },
+    { src:"images/icd-7-cream-data.jpg", alt:"더마톨로지 크림 사용 결과" }
   ],
   store: [          // 매장 사진 2장
     { src:"images/store-1.jpg", alt:"올리비아로렌 매장판매순위 1위 인천구월점" },
     { src:"images/store-2.jpg", alt:"세정그룹 감사패와 매출우수상" }
   ],
-  beforeAfter: [    // 변화 후 사진
-    { src:"images/after-1.jpg", alt:"7Days 프로그램 후 정면" },
-    { src:"images/after-2.jpg", alt:"7Days 프로그램 후 정면" },
-    { src:"images/after-3.jpg", alt:"7Days 프로그램 후 옆모습" },
-    { src:"images/after-4.jpg", alt:"7Days 프로그램 후 옆모습" }
+  beforeAfter: [    // 전 · 후 짝 (cap = cap_ba 순서)
+    { before:"images/before-1.jpg", after:"images/after-1.jpg", day3:true, cap:0, alt:"정면" },
+    { before:"images/before-2.jpg", after:"images/after-4.jpg", cap:1, alt:"옆모습" },
+    { before:"images/before-3.jpg", after:"images/after-3.jpg", cap:2, alt:"턱선" }
   ],
 
   /* 맺음말 위 자동 슬라이드 — 가로형 사진이 가장 잘 맞습니다 */
@@ -522,12 +556,12 @@ const T = {
     cta:"함께 시작하기",
     note:"회원가입하시고 함께 아름다워져요",
     ph_store:"매장 사진<br>준비 중",
-    ph_ba:["변화 전<br>사진 준비 중","변화 후<br>사진 준비 중"],
     cap_store:["매장판매순위 1위 — 인천구월점","세정그룹 감사패와 매출우수상"],
-    cap_ba:["정면 — 이마와 콧등의 맑은 윤기","정면 — 고르게 정돈된 피부결","옆모습 — 볼에서 턱까지 매끈한 결","옆모습 — 밝고 고른 피부톤"],
+    cap_ba:["정면 — 이마와 콧등의 맑은 윤기","옆모습 — 밝고 고른 피부톤","옆모습 — 볼에서 턱까지 매끈한 결"],
+    ba_before:"시작 전", ba_day3:"3일차", ba_after:"7일 후",
+    icd_src:"출처: 리만코리아 공식몰 · 수치는 4주 인체적용시험 결과",
     gal_h:"ICD에서 변화한 사람들",
     gal_p:"모두 ICD를 만나 아름다움을 찾은 사람들입니다.",
-    cap_icd:["제주 자이언트 병풀","래디언솜™100 3종","더마톨로지 퍼스트 패키지","더마톨로지 크림"],
     ph_gal:"사진 슬라이드 자리<br>PHOTOS.gallery 에 사진을 넣어 주세요",
     foot:"조명선 Alice"
   },
@@ -548,12 +582,12 @@ const T = {
     cta:"Start with me",
     note:"Sign up, and let’s grow beautiful together",
     ph_store:"Store photo<br>coming soon",
-    ph_ba:["Before<br>coming soon","After<br>coming soon"],
     cap_store:["No. 1 in store sales — Incheon Guwol","Plaque of appreciation and sales award from Sejung Group"],
-    cap_ba:["Front — a clear glow on forehead and nose","Front — an even, smooth texture","Profile — a smooth line from cheek to jaw","Profile — a bright, even skin tone"],
+    cap_ba:["Front — a clear glow on forehead and nose","Profile — a bright, even skin tone","Profile — a smooth line from cheek to jaw"],
+    ba_before:"Before", ba_day3:"Day 3", ba_after:"After 7 days",
+    icd_src:"Source: RIMAN Korea official mall · figures from 4-week clinical tests",
     gal_h:"People changed by ICD",
     gal_p:"Every one of them found their beauty through ICD.",
-    cap_icd:["Giant BYoungPool centella from Jeju","Radiansome™100 trio","Dermatology First Package","Dermatology Cream"],
     ph_gal:"Photo slideshow<br>coming soon",
     foot:"Alice Cho Myung-sun"
   },
@@ -574,12 +608,12 @@ const T = {
     cta:"一起开始",
     note:"注册加入，一起变美吧",
     ph_store:"门店照片<br>准备中",
-    ph_ba:["改变前<br>照片准备中","改变后<br>照片准备中"],
     cap_store:["门店销售排名第一 — 仁川九月店","世正集团感谢牌与销售优秀奖"],
-    cap_ba:["正面 — 额头与鼻梁的清透光泽","正面 — 细腻均匀的肤质","侧面 — 从脸颊到下颌的顺滑线条","侧面 — 明亮均匀的肤色"],
+    cap_ba:["正面 — 额头与鼻梁的清透光泽","侧面 — 明亮均匀的肤色","侧面 — 从脸颊到下颌的顺滑线条"],
+    ba_before:"开始前", ba_day3:"第3天", ba_after:"7天后",
+    icd_src:"来源：RIMAN 韩国官方商城 · 数据来自4周人体功效测试",
     gal_h:"因 ICD 而改变的人们",
     gal_p:"他们都是遇见 ICD、找回美丽的人。",
-    cap_icd:["济州巨型积雪草","Radiansome™100 三件套","Dermatology First Package","Dermatology Cream"],
     ph_gal:"照片幻灯片<br>准备中",
     foot:"Alice Cho Myung-sun"
   },
@@ -600,12 +634,12 @@ const T = {
     cta:"一緒にはじめる",
     note:"会員登録して、一緒に美しくなりましょう",
     ph_store:"店舗の写真<br>準備中",
-    ph_ba:["変化前<br>写真準備中","変化後<br>写真準備中"],
     cap_store:["店舗売上ランキング1位 — 仁川九月店","セジョングループの感謝牌と売上優秀賞"],
-    cap_ba:["正面 — 額と鼻筋の澄んだツヤ","正面 — なめらかに整った肌のキメ","横顔 — 頬からあごまでなめらかなライン","横顔 — 明るく均一な肌のトーン"],
+    cap_ba:["正面 — 額と鼻筋の澄んだツヤ","横顔 — 明るく均一な肌のトーン","横顔 — 頬からあごまでなめらかなライン"],
+    ba_before:"開始前", ba_day3:"3日目", ba_after:"7日後",
+    icd_src:"出典：RIMANコリア公式モール・数値は4週間のヒト使用試験結果",
     gal_h:"ICDで変わった人たち",
     gal_p:"みんな、ICDに出会って美しさを見つけた人たちです。",
-    cap_icd:["済州のジャイアントツボクサ","ラディアンソーム™100 3点","ダーマトロジー ファーストパッケージ","ダーマトロジー クリーム"],
     ph_gal:"写真スライド<br>準備中",
     foot:"アリス チョ・ミョンソン"
   },
@@ -626,12 +660,12 @@ const T = {
     cta:"Начать вместе",
     note:"Зарегистрируйтесь — будем красивыми вместе",
     ph_store:"Фото салона<br>скоро",
-    ph_ba:["До<br>скоро","После<br>скоро"],
     cap_store:["№ 1 по продажам — магазин Инчхон Курволь","Благодарность и награда за продажи от Sejung Group"],
-    cap_ba:["Анфас — чистое сияние на лбу и носу","Анфас — ровная, гладкая текстура","Профиль — плавная линия от щеки к подбородку","Профиль — светлый, ровный тон кожи"],
+    cap_ba:["Анфас — чистое сияние на лбу и носу","Профиль — светлый, ровный тон кожи","Профиль — плавная линия от щеки к подбородку"],
+    ba_before:"До", ba_day3:"3-й день", ba_after:"Через 7 дней",
+    icd_src:"Источник: официальный магазин RIMAN Korea · данные 4-недельных клинических тестов",
     gal_h:"Люди, которых изменил ICD",
     gal_p:"Все они нашли свою красоту вместе с ICD.",
-    cap_icd:["Центелла Giant BYoungPool с Чеджу","Набор Radiansome™100","Dermatology First Package","Dermatology Cream"],
     ph_gal:"Слайд-шоу<br>скоро",
     foot:"Алиса Чо Мён Сон"
   }
@@ -695,6 +729,7 @@ function makeSlider(frame, dotsBox, list, cls, ms){
 
 makeSlider($('#frame'), $('#dots'), PHOTOS.hero, 'slide', 6500);
 makeSlider($('#gal'), $('#galDots'), PHOTOS.gallery, 'gal-slide', GALLERY_MS);
+makeSlider($('#icdFrame'), $('#icdDots'), PHOTOS.icd, 'gal-slide', 3000);
 
 if(!PHOTOS.gallery.length){
   if(SHOW_PLACEHOLDER){
@@ -728,6 +763,45 @@ function fillPlate(wrapId, gridId, list, ph, caps){
   } else { wrap.style.display = 'none'; }
 }
 
+/* 전 · 후 비교 — 넓은 화면은 좌우로 나란히, 휴대폰은 한 장씩 3초마다 */
+let baT = null, baI = 0;
+const baMQ = matchMedia('(max-width:719px)');
+function renderBA(t){
+  const grid = $('#baGrid'), dots = $('#baDots');
+  grid.innerHTML = ''; dots.innerHTML = '';
+  PHOTOS.beforeAfter.forEach(p=>{
+    const pair = document.createElement('div');
+    pair.className = 'ba-pair';
+    pair.innerHTML =
+      '<figure class="ba-item"><img src="'+p.before+'" alt="'+t.ba_before+' — '+p.alt+'" loading="lazy" decoding="async">'
+      + '<span class="ba-tag">'+(p.day3 ? t.ba_day3 : t.ba_before)+'</span></figure>'
+      + '<figure class="ba-item is-after"><img src="'+p.after+'" alt="'+t.ba_after+' — '+p.alt+'" loading="lazy" decoding="async">'
+      + '<span class="ba-tag">'+t.ba_after+'</span><figcaption>'+(t.cap_ba[p.cap]||'')+'</figcaption></figure>';
+    grid.appendChild(pair);
+  });
+  grid.querySelectorAll('.ba-item').forEach((e,n)=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', (n+1)+' / '+grid.querySelectorAll('.ba-item').length);
+    b.onclick = ()=>{ baShow(n); baPlay(); };
+    dots.appendChild(b);
+  });
+  baShow(0); baPlay();
+}
+function baShow(i){
+  const items = document.querySelectorAll('#baGrid .ba-item'), dots = document.querySelectorAll('#baDots button');
+  if(!items.length) return;
+  baI = (i + items.length) % items.length;
+  items.forEach((e,k)=>e.classList.toggle('on', k===baI));
+  dots.forEach((b,k)=> k===baI ? b.setAttribute('aria-current','true') : b.removeAttribute('aria-current'));
+}
+function baPlay(){
+  clearInterval(baT);
+  if(baMQ.matches && !reduce && !document.hidden) baT = setInterval(()=>baShow(baI+1), 3000);
+}
+baMQ.addEventListener('change', baPlay);
+document.addEventListener('visibilitychange', ()=>{ document.hidden ? clearInterval(baT) : baPlay(); });
+
 /* 언어 적용 */
 function apply(l){
   const t = T[l];
@@ -745,9 +819,9 @@ function apply(l){
   $('#foot').textContent = t.foot;
   const ge = $('#galEmpty'); if(ge) ge.innerHTML = t.ph_gal;
   fillPlate('plate-store','grid-store', PHOTOS.store, [t.ph_store, t.ph_store], t.cap_store);
-  fillPlate('plate-ba','grid-ba', PHOTOS.beforeAfter, t.ph_ba, t.cap_ba);
+  renderBA(t);
   fillPlate('plate-article','grid-article', PHOTOS.article, null, null);
-  fillPlate('plate-icd','grid-icd', PHOTOS.icd, null, t.cap_icd);
+  $('#icdSrc').textContent = t.icd_src;
   $('#galT').textContent = t.gal_h;
   $('#galP').textContent = t.gal_p;
   $('#switchLabel').textContent = t.label;
